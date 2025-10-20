@@ -1188,5 +1188,47 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', init);
     </script>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Example: push order on button click
+  document.getElementById("orderBtn").addEventListener("click", () => {
+    push(ref(db, "orders/"), {
+      table: 5,
+      items: ["Pizza", "Coke"],
+      total: 350,
+      time: new Date().toLocaleString()
+    });
+    alert("Order Sent!");
+  });
+
+  // Example: listen for orders (Admin side)
+  const ordersList = document.getElementById("ordersList");
+  onValue(ref(db, "orders/"), (snapshot) => {
+    const data = snapshot.val();
+    ordersList.innerHTML = ""; // clear old
+    for (let key in data) {
+      ordersList.innerHTML += `<li>Table ${data[key].table}: ${data[key].items.join(", ")} - ₹${data[key].total}</li>`;
+    }
+  });
+    </script>
 </body>
+    
+
+    
                                         </html>
