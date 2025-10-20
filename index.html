@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harsha Hotel - Namma Kollegala</title>
+    <title>Harsha Hotel - Namma Kolegaala</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -243,6 +243,19 @@
         .featured-item h3 {
             color: var(--primary);
             margin-bottom: 0.5rem;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ccc;
         }
         
         /* Order Form */
@@ -504,7 +517,7 @@
                 <i class="fas fa-utensils"></i>
                 <div class="logo-text">
                     <h1>Harsha Hotel</h1>
-                    <p>ನಮ್ಮ ಕೊಲ್ಲೇಗಾಲ</p>
+                    <p>ನಮ್ಮ ಕೊಳ್ಳೇಗಾಲ</p>
                 </div>
             </div>
             <nav>
@@ -527,7 +540,10 @@
         <section id="mostRated">
             <h2>⭐ Most Rated Items</h2>
             <div class="featured-items" id="ratedList">
-                <!-- Most rated items will be dynamically added here -->
+                <div class="empty-state">
+                    <i class="fas fa-star"></i>
+                    <p>No rated items yet. Add menu items in the admin panel.</p>
+                </div>
             </div>
         </section>
 
@@ -535,7 +551,10 @@
         <section id="menu">
             <h2>📋 Our Menu</h2>
             <div class="menu-grid" id="menuList">
-                <!-- Menu items will be dynamically added here -->
+                <div class="empty-state">
+                    <i class="fas fa-utensils"></i>
+                    <p>No menu items yet. Add items in the admin panel.</p>
+                </div>
             </div>
         </section>
 
@@ -550,7 +569,7 @@
                 <div class="form-group">
                     <label for="orderItem">Select Item</label>
                     <select id="orderItem" required>
-                        <!-- Options will be dynamically added -->
+                        <option value="" disabled selected>No items available</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -583,7 +602,11 @@
                             <th>Total Plates</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">No orders yet</td>
+                        </tr>
+                    </tbody>
                 </table>
                 
                 <h3 style="margin-top: 2rem;">All Orders</h3>
@@ -596,7 +619,11 @@
                             <th>Time</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" style="text-align: center;">No orders yet</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             
@@ -643,7 +670,10 @@
                 
                 <h3 style="margin-top: 2rem;">Current Menu Items</h3>
                 <div id="currentMenuList">
-                    <!-- Current menu items will be displayed here -->
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <p>No menu items added yet.</p>
+                    </div>
                 </div>
             </div>
             
@@ -678,7 +708,7 @@
     <div class="notification" id="notification"></div>
 
     <footer>
-        <p>© 2025 Harsha Hotel - ನಮ್ಮ ಕೊಲ್ಲೇಗಾಲ | Developed by Sultan Mohammed</p>
+        <p>© 2025 Harsha Hotel - ನಮ್ಮ ಕೊಳ್ಳೇಗಾಲ | Developed by Sultan Mohammed</p>
     </footer>
 
     <script>
@@ -710,50 +740,6 @@
         function init() {
             renderMenu();
             setupEventListeners();
-            
-            // If no menu items exist, create sample data
-            if (menu.length === 0) {
-                menu = [
-                    { 
-                        id: 1, 
-                        name: 'Masala Dosa', 
-                        desc: 'Crispy dosa with spicy masala', 
-                        price: 70, 
-                        rating: 5, 
-                        category: 'main',
-                        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    },
-                    { 
-                        id: 2, 
-                        name: 'Idli Vada', 
-                        desc: 'Soft idlis & crunchy vadas with chutney', 
-                        price: 50, 
-                        rating: 4, 
-                        category: 'main',
-                        image: 'https://images.unsplash.com/photo-1630608999481-15c3f6e4b5a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    },
-                    { 
-                        id: 3, 
-                        name: 'South Indian Meals', 
-                        desc: 'Traditional South Indian thali', 
-                        price: 120, 
-                        rating: 5, 
-                        category: 'main',
-                        image: 'https://images.unsplash.com/photo-1585937421612-70ca2f5c5664?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    },
-                    { 
-                        id: 4, 
-                        name: 'Filter Coffee', 
-                        desc: 'Authentic South Indian filter coffee', 
-                        price: 20, 
-                        rating: 5, 
-                        category: 'beverages',
-                        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-                    }
-                ];
-                saveData();
-                renderMenu();
-            }
         }
         
         // Save data to localStorage
@@ -767,6 +753,26 @@
             menuList.innerHTML = '';
             orderItem.innerHTML = '';
             ratedList.innerHTML = '';
+            
+            // If no menu items, show empty state
+            if (menu.length === 0) {
+                menuList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <p>No menu items yet. Add items in the admin panel.</p>
+                    </div>
+                `;
+                
+                ratedList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-star"></i>
+                        <p>No rated items yet. Add menu items in the admin panel.</p>
+                    </div>
+                `;
+                
+                orderItem.innerHTML = '<option value="" disabled selected>No items available</option>';
+                return;
+            }
             
             // Sort by rating for featured items
             const sortedByRating = [...menu].sort((a, b) => b.rating - a.rating);
@@ -878,33 +884,46 @@
             const aggBody = document.querySelector('#aggTable tbody');
             aggBody.innerHTML = '';
             
-            Object.keys(agg).forEach(k => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${k}</td><td>${agg[k]}</td>`;
-                aggBody.appendChild(tr);
-            });
+            if (Object.keys(agg).length === 0) {
+                aggBody.innerHTML = '<tr><td colspan="2" style="text-align: center;">No orders yet</td></tr>';
+            } else {
+                Object.keys(agg).forEach(k => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${k}</td><td>${agg[k]}</td>`;
+                    aggBody.appendChild(tr);
+                });
+            }
             
             // Render all orders
             const orderBody = document.querySelector('#orderTable tbody');
             orderBody.innerHTML = '';
             
-            orders.forEach(o => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${o.table}</td>
-                    <td>${o.item}</td>
-                    <td>${o.qty}</td>
-                    <td>${o.time}</td>
-                `;
-                orderBody.appendChild(tr);
-            });
+            if (orders.length === 0) {
+                orderBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No orders yet</td></tr>';
+            } else {
+                orders.forEach(o => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${o.table}</td>
+                        <td>${o.item}</td>
+                        <td>${o.qty}</td>
+                        <td>${o.time}</td>
+                    `;
+                    orderBody.appendChild(tr);
+                });
+            }
             
             // Render current menu items in admin
             const currentMenuList = document.getElementById('currentMenuList');
             currentMenuList.innerHTML = '';
             
             if (menu.length === 0) {
-                currentMenuList.innerHTML = '<p>No menu items added yet.</p>';
+                currentMenuList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <p>No menu items added yet.</p>
+                    </div>
+                `;
             } else {
                 const table = document.createElement('table');
                 table.className = 'admin-table';
@@ -960,6 +979,12 @@
             // Order form submission
             document.getElementById('orderForm').addEventListener('submit', e => {
                 e.preventDefault();
+                
+                if (menu.length === 0) {
+                    showNotification('No menu items available. Please add items in admin panel first.');
+                    return;
+                }
+                
                 const order = {
                     table: document.getElementById('orderTable').value,
                     item: document.getElementById('orderItem').value,
@@ -1164,4 +1189,4 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-                        </html>
+                                        </html>
