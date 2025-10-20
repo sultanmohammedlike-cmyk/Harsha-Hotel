@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harsha Hotel</title>
+<style>
+  :root {
+    --main:#c49b63; --dark:#222; --light:#fff; --bg:#f7f5f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+  body{background:var(--bg);color:var(--dark);min-height:100vh;display:flex;flex-direction:column;}
+  header{background:var(--dark);color:var(--light);padding:1rem;text-align:center;}
+  h1{font-size:1.8rem;}
+  main{flex:1;padding:1rem;max-width:900px;margin:auto;width:100%;}
+  section{margin-bottom:2rem;}
+  h2{border-left:5px solid var(--main);padding-left:.5rem;margin-bottom:1rem;}
+  .menu-item{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:1rem;margin-bottom:1rem;border-radius:10px;}
+  .menu-item h3{color:var(--main);}
+  .menu-item button{background:var(--main);color:#fff;border:none;padding:.5rem 1rem;border-radius:5px;margin-top:.5rem;cursor:pointer;}
+  .menu-item button:hover{opacity:.8;}
+  form{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem;}
+  input,select,textarea{padding:.5rem;border:1px solid #ccc;border-radius:5px;width:100%;}
+  button[type=submit]{background:var(--main);color:#fff;padding:.5rem;border:none;border-radius:5px;cursor:pointer;}
+  button[type=submit]:hover{opacity:.9;}
+  .admin-panel{display:none;background:#fff;padding:1rem;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+  .admin-table{width:100%;border-collapse:collapse;margin-top:1rem;}
+  .admin-table th,.admin-table td{border:1px solid #ccc;padding:.5rem;text-align:left;}
+  footer{text-align:center;background:var(--dark);color:#ccc;padding:.5rem;}
+  @media(max-width:600px){h1{font-size:1.4rem;}.menu-item{padding:.7rem;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍽️ Harsha Hotel</h1>
+  <p>Classic taste, timeless hospitality</p>
+</header>
+
+<main>
+  <section id="mostRated">
+    <h2>⭐ Most Rated Items</h2>
+    <div id="ratedList"></div>
+  </section>
+
+  <section id="menu">
+    <h2>📋 Menu</h2>
+    <div id="menuList"></div>
+  </section>
+
+  <section id="quickOrder">
+    <h2>🧾 Quick Order</h2>
+    <form id="orderForm">
+      <input id="orderTable" placeholder="Table number or Takeaway" required>
+      <select id="orderItem"></select>
+      <input type="number" id="orderQty" min="1" value="1" required>
+      <button type="submit">Place Order</button>
+    </form>
+  </section>
+
+  <button id="openAdmin" style="background:#222;color:#fff;padding:.6rem 1rem;border:none;border-radius:5px;">Admin Panel</button>
+
+  <section class="admin-panel" id="adminPanel">
+    <h2>👨‍🍳 Admin Dashboard</h2>
+    <p><b>Aggregated Orders (for kitchen)</b></p>
+    <table class="admin-table" id="aggTable">
+      <thead><tr><th>Item</th><th>Total Plates</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p style="margin-top:1rem;"><b>All Orders</b></p>
+    <table class="admin-table" id="orderTable">
+      <thead><tr><th>Table</th><th>Item</th><th>Qty</th><th>Time</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h3 style="margin-top:1rem;">Manage Menu</h3>
+    <form id="addMenuForm">
+      <input id="newName" placeholder="Item name" required>
+      <input id="newDesc" placeholder="Description" required>
+      <input type="number" id="newPrice" placeholder="Price" required>
+      <input type="number" id="newRating" placeholder="Rating (1-5)" min="1" max="5" required>
+      <button type="submit">Add Item</button>
+    </form>
+
+    <div style="margin-top:1rem;">
+      <button id="exportData">Export JSON</button>
+      <button id="clearAll">Clear All Orders</button>
+      <button id="closeAdmin">Close Panel</button>
+    </div>
+  </section>
+</main>
+
+<footer>© 2025 Harsha Hotel | Developed by Sultan Mohammed</footer>
+
+<script>
+const menuList=document.getElementById('menuList');
+const ratedList=document.getElementById('ratedList');
+const orderItem=document.getElementById('orderItem');
+let menu=JSON.parse(localStorage.getItem('menu')||'[]');
+let orders=JSON.parse(localStorage.getItem('orders')||'[]');
+
+function saveData(){localStorage.setItem('menu',JSON.stringify(menu));localStorage.setItem('orders',JSON.stringify(orders));}
+
+function renderMenu(){
+  menuList.innerHTML='';
+  orderItem.innerHTML='';
+  ratedList.innerHTML='';
+  menu.sort((a,b)=>b.rating-a.rating);
+  menu.forEach((m,i)=>{
+    const div=document.createElement('div');
+    div.className='menu-item';
+    div.innerHTML=`<h3>${m.name}</h3>
+      <p>${m.desc}</p>
+      <p>₹${m.price} | ⭐${m.rating}</p>
+      <button onclick="addToOrder('${m.name}')">Order</button>`;
+    menuList.appendChild(div);
+    const opt=document.createElement('option');
+    opt.value=m.name; opt.textContent=m.name;
+    orderItem.appendChild(opt);
+    if(i<3){ratedList.innerHTML+=`<div>${m.name} ⭐${m.rating}</div>`;}
+  });
+}
+
+function addToOrder(name){
+  const table=prompt('Enter table number or Takeaway:');
+  const qty=parseInt(prompt('Enter number of plates:'),10);
+  if(!table||!qty)return;
+  const order={table,item:name,qty,time:new Date().toLocaleTimeString()};
+  orders.push(order); saveData(); alert('Order placed!');
+}
+
+document.getElementById('orderForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const o={table:orderTable.value,item:orderItem.value,qty:+orderQty.value,time:new Date().toLocaleTimeString()};
+  orders.push(o); saveData(); alert('Order placed!'); e.target.reset();
+});
+
+function renderAdmin(){
+  const agg={};
+  orders.forEach(o=>agg[o.item]=(agg[o.item]||0)+o.qty);
+  const aggBody=document.querySelector('#aggTable tbody');
+  aggBody.innerHTML='';
+  Object.keys(agg).forEach(k=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${k}</td><td>${agg[k]}</td>`;
+    aggBody.appendChild(tr);
+  });
+  const orderBody=document.querySelector('#orderTable tbody');
+  orderBody.innerHTML='';
+  orders.forEach(o=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${o.table}</td><td>${o.item}</td><td>${o.qty}</td><td>${o.time}</td>`;
+    orderBody.appendChild(tr);
+  });
+}
+
+document.getElementById('openAdmin').addEventListener('click',()=>{
+  const pin=prompt('Enter admin PIN (1234):');
+  if(pin==='1234'){document.getElementById('adminPanel').style.display='block';renderAdmin();}
+  else alert('Wrong PIN!');
+});
+document.getElementById('closeAdmin').addEventListener('click',()=>document.getElementById('adminPanel').style.display='none');
+
+document.getElementById('addMenuForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const m={name:newName.value,desc:newDesc.value,price:+newPrice.value,rating:+newRating.value};
+  menu.push(m); saveData(); renderMenu(); e.target.reset();
+});
+
+document.getElementById('exportData').addEventListener('click',()=>{
+  const data=JSON.stringify({menu,orders},null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='harsha_hotel_data.json'; a.click();
+});
+
+document.getElementById('clearAll').addEventListener('click',()=>{
+  if(confirm('Clear all orders?')){orders=[];saveData();renderAdmin();}
+});
+
+if(menu.length===0){
+  menu=[
+    {name:'Masala Dosa',desc:'Crispy dosa with spicy masala',price:70,rating:5},
+    {name:'Idli Vada',desc:'Soft idlis & crunchy vadas',price:50,rating:4},
+    {name:'Meals',desc:'South Indian thali',price:120,rating:5},
+    {name:'Tea',desc:'Hot and refreshing',price:15,rating:4}
+  ];
+  saveData();
+}
+renderMenu();
+</script>
+</body>
+  </html>
